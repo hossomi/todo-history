@@ -1,20 +1,36 @@
 package br.com.hossomi.sample.todohistory.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.envers.Audited;
 
 @Entity
 @Audited
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Mapping {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Class<?> parentType;
+    @Column(nullable = false)
+    private Class<? extends BaseEntity> parentType;
+    @Column(nullable = false)
     private Long parentId;
-    private Class<?> childType;
+    @Column(nullable = false)
+    private Class<? extends BaseEntity> childType;
+    @Column(nullable = false)
     private Long childId;
+
+    public static Mapping create(BaseEntity parent, BaseEntity child) {
+        return Mapping.builder()
+                .parentType(parent.getClass())
+                .parentId(parent.getId())
+                .childType(child.getClass())
+                .childId(child.getId())
+                .build();
+    }
 }

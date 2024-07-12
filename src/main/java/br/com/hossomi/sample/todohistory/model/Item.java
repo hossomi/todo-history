@@ -1,19 +1,22 @@
 package br.com.hossomi.sample.todohistory.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.envers.Audited;
 
 @Entity
 @Audited
 @Data
-public class Item {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Item implements BaseEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
     private String name;
 
     @ManyToOne
