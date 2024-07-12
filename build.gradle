@@ -1,5 +1,7 @@
 plugins {
-    id 'java'
+    id 'application'
+    alias libs.plugins.springBoot
+    alias libs.plugins.springBootManagement
 }
 
 group = 'br.com.hossomi.sample'
@@ -10,10 +12,23 @@ repositories {
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation libs.springBoot.webMvc
+    implementation libs.springBoot.dataJpa
+    runtimeOnly libs.mariadb.driver
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
+
+    testImplementation platform(libs.junit.bom)
+    testImplementation libs.junit.jupiter
+    testImplementation libs.springBoot.test
+    testCompileOnly libs.lombok
+    testAnnotationProcessor libs.lombok
 }
 
 test {
     useJUnitPlatform()
+}
+
+application {
+    mainClass = 'br.com.hossomi.sample.Main'
 }

@@ -1,0 +1,17 @@
+[versions]
+lombok = "1.18.32"
+springBoot = "3.3.1"
+springBootManagement = "1.1.5"
+
+[libraries]
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+mariadb-driver = { group = 'org.mariadb.jdbc', name = 'mariadb-java-client' }
+springBoot-dataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
+springBoot-webMvc = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
+springBoot-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
+junit-jupiter = { group = 'org.junit.jupiter', name = 'junit-jupiter' }
+junit-bom = { group = 'org.junit', name = 'junit-bom' }
+
+[plugins]
+springBoot = { id = "org.springframework.boot", version.ref = "springBoot" }
+springBootManagement = { id = "io.spring.dependency-management", version.ref = "springBootManagement" }
