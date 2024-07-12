@@ -4,8 +4,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
+import org.hibernate.envers.Audited;
 
 @Entity
+@Audited
 @Data
 public class Item {
 

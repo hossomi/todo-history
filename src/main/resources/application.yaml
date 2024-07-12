@@ -6,4 +6,6 @@ spring.datasource:
 
 spring.jpa:
   generate-ddl: true
-  
+  hibernate:
+    naming:
+      physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
