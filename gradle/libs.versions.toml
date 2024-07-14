@@ -5,11 +5,11 @@ springBootManagement = "1.1.5"
 
 [libraries]
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
-mariadb-driver = { group = 'org.mariadb.jdbc', name = 'mariadb-java-client' }
+h2 = { group = 'com.h2database', name = 'h2' }
 springBoot-dataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
 springBoot-webMvc = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
 springBoot-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
-hibernate-envers = {group= 'org.hibernate.orm', name= 'hibernate-envers'}
+hibernate-envers = { group = 'org.hibernate.orm', name = 'hibernate-envers' }
 
 junit-jupiter = { group = 'org.junit.jupiter', name = 'junit-jupiter' }
 junit-bom = { group = 'org.junit', name = 'junit-bom' }

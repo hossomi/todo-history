@@ -15,7 +15,7 @@ dependencies {
     implementation libs.springBoot.webMvc
     implementation libs.springBoot.dataJpa
     implementation libs.hibernate.envers
-    runtimeOnly libs.mariadb.driver
+    runtimeOnly libs.h2
     compileOnly libs.lombok
     annotationProcessor libs.lombok
 
