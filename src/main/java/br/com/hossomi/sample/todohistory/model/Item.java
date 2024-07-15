@@ -1,12 +1,10 @@
 package br.com.hossomi.sample.todohistory.model;
 
 import jakarta.persistence.*;
+import java.util.Set;
 import lombok.*;
 import org.hibernate.annotations.SQLJoinTableRestriction;
-import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.envers.Audited;
-
-import java.util.Collection;
 
 @Entity
 @Audited
@@ -32,5 +30,5 @@ public class Item implements BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "childId"))
     @SQLJoinTableRestriction("`parentType` = 'br.com.hossomi.sample.todohistory.model.Item'")
     @OneToMany
-    private Collection<Tag> tags;
+    private Set<Tag> tags;
 }

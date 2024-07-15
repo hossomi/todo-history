@@ -2,16 +2,14 @@ package br.com.hossomi.sample.todohistory.controller.user;
 
 import br.com.hossomi.sample.todohistory.controller.user.model.CreateUserRequest;
 import br.com.hossomi.sample.todohistory.controller.user.model.UpdateUserRequest;
-import br.com.hossomi.sample.todohistory.model.Mapping;
+import br.com.hossomi.sample.todohistory.controller.user.model.UserDto;
 import br.com.hossomi.sample.todohistory.model.Tag;
 import br.com.hossomi.sample.todohistory.model.User;
-import br.com.hossomi.sample.todohistory.repository.MappingRepository;
-import br.com.hossomi.sample.todohistory.repository.TagRepository;
 import br.com.hossomi.sample.todohistory.repository.UserRepository;
+import br.com.hossomi.sample.todohistory.service.TagService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
 import static java.util.stream.StreamSupport.stream;
 
 @AllArgsConstructor
@@ -20,45 +18,51 @@ import static java.util.stream.StreamSupport.stream;
 public class UserController {
 
     private final UserRepository userRepo;
-    private final TagRepository tagRepo;
-    private final MappingRepository mappingRepo;
+    private final TagService tagService;
 
     @PostMapping
-    public User create(@RequestBody CreateUserRequest request) {
-        return userRepo.save(User.builder()
+    @Transactional
+    public UserDto create(@RequestBody CreateUserRequest request) {
+        User user = userRepo.save(User.builder()
                 .name(request.name())
                 .build());
+        return convert(user);
     }
 
     @GetMapping
-    public Iterable<User> list() {
-        return stream(userRepo.findAll().spliterator(), false).toList();
+    public Iterable<UserDto> list() {
+        return stream(userRepo.findAll().spliterator(), false)
+                .map(UserController::convert)
+                .toList();
     }
 
     @GetMapping("/{userId}")
-    public User get(@PathVariable("userId") Long userId) {
-        return userRepo.findById(userId).orElseThrow();
+    @Transactional
+    public UserDto get(@PathVariable("userId") Long userId) {
+        return convert(userRepo.findById(userId).orElseThrow());
     }
 
     @PutMapping("/{userId}")
     @Transactional
-    public User update(
+    public UserDto update(
             @PathVariable("userId") Long userId,
             @RequestBody UpdateUserRequest request) {
         User user = userRepo.findById(userId).orElseThrow();
         if (request.name() != null) { user.setName(request.name()); }
-        if (request.tags() != null) {
-            // TODO: fix this
-            // Iterable<Tag> tags = tagRepo.saveAll(request);
-            // mappingRepo.saveAll(stream(tags.spliterator(), false)
-            //         .map(tag -> Mapping.create(item, tag))
-            //         .toList());
-        }
-        return userRepo.save(user);
+        if (request.tags() != null) tagService.setTags(user, request.tags());
+        return convert(userRepo.save(user));
     }
 
     @DeleteMapping("/{userId}")
     public void delete(@PathVariable("userId") Long userId) {
         userRepo.deleteById(userId);
+    }
+
+    private static UserDto convert(User user) {
+        return UserDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .tags(Tag.toMap(user.getTags()))
+                .build();
     }
 }

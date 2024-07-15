@@ -1,17 +1,22 @@
 package br.com.hossomi.sample.todohistory.repository;
 
+import br.com.hossomi.sample.todohistory.model.BaseEntity;
 import br.com.hossomi.sample.todohistory.model.Tag;
+import java.util.Map;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.Map;
 
 @Repository
 public interface TagRepository extends CrudRepository<Tag, Long> {
 
-    default Iterable<Tag> saveAll(Map<String, String> tags) {
-        return saveAll(tags.entrySet().stream()
-                .map(e -> Tag.create(e.getKey(), e.getValue()))
-                .toList());
-    }
+    @Query("""
+            select t
+            from Mapping m
+            join Tag t on t.id = m.childId
+            where m.parentType = :parentType
+                and m.parentId = :parentId
+                and m.childType = 'br.com.hossomi.sample.todohistory.model.Tag'
+            """)
+    Iterable<Tag> findByParent(Class<? extends BaseEntity> parentType, Long parentId);
 }

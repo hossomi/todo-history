@@ -1,6 +1,9 @@
 package br.com.hossomi.sample.todohistory.model;
 
 import jakarta.persistence.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.*;
 import org.hibernate.envers.Audited;
 
@@ -26,5 +29,12 @@ public class Tag implements BaseEntity {
                 .name(name)
                 .value(value)
                 .build();
+    }
+
+    public static Map<String, String> toMap(Collection<Tag> tags) {
+        if (tags == null) return null;
+        return tags.stream().collect(Collectors.toMap(
+                Tag::getName,
+                Tag::getValue));
     }
 }

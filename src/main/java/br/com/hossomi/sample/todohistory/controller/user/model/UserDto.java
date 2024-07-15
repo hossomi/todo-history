@@ -4,7 +4,8 @@ import java.util.Map;
 import lombok.Builder;
 
 @Builder
-public record UpdateUserRequest(
+public record UserDto(
+        Long id,
         String name,
         Map<String, String> tags
 ) {}
