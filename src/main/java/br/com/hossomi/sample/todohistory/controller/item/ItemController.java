@@ -13,7 +13,6 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import static java.util.stream.Collectors.toMap;
 import static java.util.stream.StreamSupport.stream;
 
 @RestController

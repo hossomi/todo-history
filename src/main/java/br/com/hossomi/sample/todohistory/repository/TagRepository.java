@@ -2,7 +2,6 @@ package br.com.hossomi.sample.todohistory.repository;
 
 import br.com.hossomi.sample.todohistory.model.BaseEntity;
 import br.com.hossomi.sample.todohistory.model.Tag;
-import java.util.Map;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
