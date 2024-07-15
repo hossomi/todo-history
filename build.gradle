@@ -18,6 +18,7 @@ dependencies {
     runtimeOnly libs.h2
     compileOnly libs.lombok
     annotationProcessor libs.lombok
+    implementation libs.guava
 
     testImplementation platform(libs.junit.bom)
     testImplementation libs.junit.jupiter

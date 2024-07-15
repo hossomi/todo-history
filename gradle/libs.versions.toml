@@ -4,12 +4,13 @@ springBoot = "3.3.1"
 springBootManagement = "1.1.5"
 
 [libraries]
-lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 h2 = { group = 'com.h2database', name = 'h2' }
 springBoot-dataJpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
 springBoot-webMvc = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
 springBoot-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
 hibernate-envers = { group = 'org.hibernate.orm', name = 'hibernate-envers' }
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+guava = { group = 'com.google.guava', name = 'guava', version = '11.0.2' }
 
 junit-jupiter = { group = 'org.junit.jupiter', name = 'junit-jupiter' }
 junit-bom = { group = 'org.junit', name = 'junit-bom' }

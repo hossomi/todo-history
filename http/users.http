@@ -1,0 +1,20 @@
+### Create user
+POST {{ url }}/users
+Content-Type: application/json
+
+{
+  "name": "Marcelo"
+}
+
+### Get user
+GET {{ url }}/users/1
+
+### Update user
+PUT {{ url }}/users/1
+Content-Type: application/json
+
+{
+  "tags": {
+    "one": "1"
+  }
+}

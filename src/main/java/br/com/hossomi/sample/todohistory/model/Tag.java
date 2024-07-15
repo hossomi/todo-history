@@ -20,4 +20,11 @@ public class Tag implements BaseEntity {
     private String name;
     @Column(nullable = false)
     private String value;
+
+    public static Tag create(String name, String value) {
+        return builder()
+                .name(name)
+                .value(value)
+                .build();
+    }
 }

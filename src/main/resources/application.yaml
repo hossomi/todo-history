@@ -5,9 +5,10 @@ spring.datasource:
   url: "jdbc:h2:file:./build/database"
 
 spring.jpa:
-  properties:
-    hibernate.globally_quoted_identifiers: true
+  show-sql: true
   hibernate:
-    ddl-auto: create
+    ddl-auto: update
     naming:
       physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  properties:
+    hibernate.globally_quoted_identifiers: true

@@ -1,0 +1,27 @@
+### Create item
+POST {{ url }}/items
+Content-Type: application/json
+
+{
+  "name": "Chores"
+}
+
+### Get item
+GET {{ url }}/items/1
+
+### Assign item
+PUT {{ url }}/items/1
+Content-Type: application/json
+
+{
+  "assigneeId": 1
+}
+
+### Tag item
+POST {{ url }}/items/1/tags
+Content-Type: application/json
+
+{
+  "tag-1": "value-1",
+  "tag-2": "value-2"
+}
