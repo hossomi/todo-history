@@ -5,7 +5,6 @@ import br.com.hossomi.sample.todohistory.model.Mapping;
 import br.com.hossomi.sample.todohistory.repository.MappingRepository;
 import com.google.common.collect.Multimaps;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -16,7 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.List;
 
 import static com.google.common.collect.Collections2.transform;
 import static java.util.stream.Collectors.toList;
@@ -64,7 +62,7 @@ public class MappingService {
     private static Specification<Mapping> hasAnyOfChildren(Collection<? extends GenericEntity> children) {
         var childrenByType = Multimaps.index(children, child -> child.getClass());
         return Specification.anyOf(childrenByType.asMap().entrySet().stream()
-                .map(e -> hasAnyOfChildren(e.getKey(), transform(e.getValue(), GenericEntity::getId)))
+                .map(e -> hasAnyOfChildren(e.getKey(), transform(e.getValue(), GenericEntity::id)))
                 .collect(toList()));
     }
 
@@ -78,7 +76,7 @@ public class MappingService {
         return (root, query, criteria) -> entity != null
                 ? criteria.and(
                 criteria.equal(root.get("parentType"), entity.getClass()),
-                criteria.equal(root.get("parentId"), entity.getId()))
+                criteria.equal(root.get("parentId"), entity.id()))
                 : null;
     }
 

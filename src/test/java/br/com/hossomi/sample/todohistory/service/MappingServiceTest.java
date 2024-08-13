@@ -1,8 +1,8 @@
 package br.com.hossomi.sample.todohistory.service;
 
-import br.com.hossomi.sample.todohistory.test.TestEntity;
 import br.com.hossomi.sample.todohistory.model.Mapping;
 import br.com.hossomi.sample.todohistory.repository.MappingRepository;
+import br.com.hossomi.sample.todohistory.test.TestEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.BeforeEach;

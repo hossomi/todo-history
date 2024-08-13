@@ -32,9 +32,9 @@ public class Mapping {
     public static Mapping create(GenericEntity parent, GenericEntity child) {
         return Mapping.builder()
                 .parentType(parent.getClass())
-                .parentId(parent.getId())
+                .parentId(parent.id())
                 .childType(child.getClass())
-                .childId(child.getId())
+                .childId(child.id())
                 .build();
     }
 }

@@ -26,7 +26,7 @@ public class UserController {
         User user = userRepo.save(User.builder()
                 .name(request.name())
                 .build());
-        UserDto.UserDtoBuilder dto = convert(user);
+        UserDto.Builder dto = convert(user);
 
         if (request.tags() != null) { dto.tags(tagService.setTags(user, request.tags())); }
         return dto.build();
@@ -36,7 +36,7 @@ public class UserController {
     public Iterable<UserDto> list() {
         return stream(userRepo.findAll().spliterator(), false)
                 .map(UserController::convert)
-                .map(UserDto.UserDtoBuilder::build)
+                .map(UserDto.Builder::build)
                 .toList();
     }
 
@@ -52,9 +52,9 @@ public class UserController {
             @PathVariable("userId") Long userId,
             @RequestBody UpdateUserRequest request) {
         User user = userRepo.findById(userId).orElseThrow();
-        if (request.name() != null) { user.setName(request.name()); }
+        if (request.name() != null) { user.name(request.name()); }
 
-        UserDto.UserDtoBuilder dto = convert(userRepo.save(user));
+        UserDto.Builder dto = convert(userRepo.save(user));
 
         if (request.tags() != null) { dto.tags(tagService.setTags(user, request.tags())); }
         return dto.build();
@@ -65,9 +65,9 @@ public class UserController {
         userRepo.deleteById(userId);
     }
 
-    private static UserDto.UserDtoBuilder convert(User user) {
+    private static UserDto.Builder convert(User user) {
         return UserDto.builder()
-                .id(user.getId())
-                .name(user.getName());
+                .id(user.id())
+                .name(user.name());
     }
 }

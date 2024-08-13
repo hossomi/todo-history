@@ -5,14 +5,15 @@ import br.com.hossomi.sample.todohistory.controller.item.model.ItemDto;
 import br.com.hossomi.sample.todohistory.controller.item.model.UpdateItemRequest;
 import br.com.hossomi.sample.todohistory.controller.user.model.UserDto;
 import br.com.hossomi.sample.todohistory.model.Item;
-import br.com.hossomi.sample.todohistory.model.Tag;
 import br.com.hossomi.sample.todohistory.repository.ItemRepository;
 import br.com.hossomi.sample.todohistory.repository.UserRepository;
 import br.com.hossomi.sample.todohistory.service.TagService;
 import jakarta.transaction.Transactional;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 import static java.util.stream.StreamSupport.stream;
 
 @RestController
@@ -27,7 +28,7 @@ public class ItemController {
     @PostMapping
     @Transactional
     public ItemDto create(@RequestBody CreateItemRequest request) {
-        Item.ItemBuilder item = Item.builder()
+        Item.Builder item = Item.builder()
                 .name(request.name());
 
         if (request.assigneeId() != null) {
@@ -56,8 +57,8 @@ public class ItemController {
             @PathVariable("itemId") Long itemId,
             @RequestBody UpdateItemRequest request) {
         Item item = itemRepo.findById(itemId).orElseThrow();
-        if (request.name() != null) item.setName(request.name());
-        if (request.assigneeId() != null) item.setAssignee(userRepo.findById(request.assigneeId()).orElseThrow());
+        if (request.name() != null) item.name(request.name());
+        if (request.assigneeId() != null) item.assignee(userRepo.findById(request.assigneeId()).orElseThrow());
         if (request.tags() != null) tagService.setTags(item, request.tags());
         return convert(itemRepo.save(item));
     }
@@ -69,11 +70,11 @@ public class ItemController {
 
     private static ItemDto convert(Item item) {
         return ItemDto.builder()
-                .id(item.getId())
-                .name(item.getName())
+                .id(item.id())
+                .name(item.name())
                 .assignee(UserDto.builder()
-                        .id(item.getAssignee().getId())
-                        .name(item.getAssignee().getName())
+                        .id(item.assignee().id())
+                        .name(item.assignee().name())
                         .build())
                 // .tags(Tag.toMap(item.getTags()))
                 .build();
