@@ -25,11 +25,7 @@ public class MappingServiceTest {
     @Mock
     private MappingRepository mappingRepository;
     @Mock
-    private EntityManagerFactory entityManagerFactory;
-    @Mock
     private EntityManager entityManager;
-    @Captor
-    private ArgumentCaptor<Specification<Mapping>> specification;
 
     private final TestEntity parent = new TestEntity(0L);
 

@@ -106,7 +106,7 @@ public class MappingServiceTest {
     @Test
     void findChildrenDoesNotReturnUnrelatedChildren() {
         Family family1 = createFamily(2);
-        Family family2 = createFamily(2);
+        createFamily(2);
         assertThat(mappingService.findChildren(family1.parent(), ChildEntity.class))
                 .containsExactlyInAnyOrderElementsOf(family1.children());
     }

@@ -15,7 +15,6 @@ import static com.google.common.collect.Lists.newArrayList;
 public class UserService {
 
     private final UserRepository userRepo;
-    private final TagService tagService;
 
     @Transactional
     public User create(User user) {
