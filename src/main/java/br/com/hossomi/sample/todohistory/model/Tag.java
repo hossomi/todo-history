@@ -13,7 +13,7 @@ import org.hibernate.envers.Audited;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Tag implements BaseEntity {
+public class Tag implements GenericEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

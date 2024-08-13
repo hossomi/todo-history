@@ -1,9 +1,7 @@
 package br.com.hossomi.sample.todohistory.model;
 
 import jakarta.persistence.*;
-import java.util.Set;
 import lombok.*;
-import org.hibernate.annotations.SQLJoinTableRestriction;
 import org.hibernate.envers.Audited;
 
 @Entity
@@ -12,7 +10,7 @@ import org.hibernate.envers.Audited;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User implements BaseEntity {
+public class User implements GenericEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,12 +18,4 @@ public class User implements BaseEntity {
 
     @Column(nullable = false, unique = true)
     private String name;
-
-    @JoinTable(
-            name = "Mapping",
-            joinColumns = @JoinColumn(name = "parentId"),
-            inverseJoinColumns = @JoinColumn(name = "childId"))
-    @SQLJoinTableRestriction("`parentType` = 'br.com.hossomi.sample.todohistory.model.User'")
-    @OneToMany
-    private Set<Tag> tags;
 }

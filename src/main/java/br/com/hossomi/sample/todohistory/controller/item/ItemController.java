@@ -75,7 +75,7 @@ public class ItemController {
                         .id(item.getAssignee().getId())
                         .name(item.getAssignee().getName())
                         .build())
-                .tags(Tag.toMap(item.getTags()))
+                // .tags(Tag.toMap(item.getTags()))
                 .build();
     }
 }

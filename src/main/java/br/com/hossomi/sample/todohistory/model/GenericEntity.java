@@ -1,5 +1,5 @@
 package br.com.hossomi.sample.todohistory.model;
 
-public interface BaseEntity {
+public interface GenericEntity {
     Long getId();
 }

@@ -1,15 +1,17 @@
 package br.com.hossomi.sample.todohistory.repository;
 
-import br.com.hossomi.sample.todohistory.model.BaseEntity;
+import br.com.hossomi.sample.todohistory.model.GenericEntity;
 import br.com.hossomi.sample.todohistory.model.Mapping;
-import java.util.Collection;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+
 @Repository
-public interface MappingRepository extends CrudRepository<Mapping, Long> {
+public interface MappingRepository extends JpaRepository<Mapping, Long>, JpaSpecificationExecutor<Mapping> {
 
     @Modifying
     @Query("""
@@ -17,5 +19,5 @@ public interface MappingRepository extends CrudRepository<Mapping, Long> {
             where m.childType = :childType
                 and m.childId in (:childId)
             """)
-    void deleteByChildren(Class<?extends BaseEntity> childType, Collection<Long> childId);
+    void deleteByChildren(Class<? extends GenericEntity> childType, Collection<Long> childId);
 }
