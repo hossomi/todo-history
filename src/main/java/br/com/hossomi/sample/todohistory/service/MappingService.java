@@ -28,9 +28,9 @@ public class MappingService {
     private final EntityManager em;
 
     @Transactional
-    public void associate(GenericEntity parent, Collection<? extends GenericEntity> children) {
-        if (children == null || children.isEmpty()) { return; }
-        mappingRepository.saveAll(children.stream()
+    public Collection<Mapping> associate(GenericEntity parent, Collection<? extends GenericEntity> children) {
+        if (children == null || children.isEmpty()) { return null; }
+        return mappingRepository.saveAll(children.stream()
                 .map(child -> Mapping.create(parent, child))
                 .toList());
     }

@@ -17,10 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import java.util.Objects;
 
+import static com.google.common.collect.Collections2.filter;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -37,110 +38,78 @@ public class MappingServiceTest {
     @PersistenceContext
     private EntityManager entityManager;
 
+    private ParentEntity parentA = new ParentEntity();
+    private ChildEntity childA1 = new ChildEntity();
+    private ChildEntity childA2 = new ChildEntity();
+    private ParentEntity parentB = new ParentEntity();
+    private ChildEntity childB1 = new ChildEntity();
+    private ChildEntity childB2 = new ChildEntity();
+
     private MappingService mappingService;
+    private Collection<Mapping> mappingsA;
+    private Collection<Mapping> mappingsB;
 
     @BeforeEach
     void setup() {
+        parentA = parentRepository.save(parentA);
+        childA1 = childRepository.save(childA1);
+        childA2 = childRepository.save(childA2);
+        parentB = parentRepository.save(parentB);
+        childB1 = childRepository.save(childB1);
+        childB2 = childRepository.save(childB2);
+
         mappingService = new MappingService(mappingRepository, entityManager);
+        mappingsA = mappingService.associate(parentA, List.of(childA1, childA2));
+        mappingsB = mappingService.associate(parentB, List.of(childB1, childB2));
     }
 
     @Test
     void associateCreatesMappings() {
-        Family family = createFamily(2);
-        assertThat(mappingRepository.findAll()).containsExactlyInAnyOrderElementsOf(family.mappings());
+        // Associations created on setup
+        assertThat(mappingRepository.findAll())
+                .hasSize(4)
+                .containsAll(mappingsA)
+                .containsAll(mappingsB);
     }
 
     @Test
     void dissociateDeletesMappingsForSingleChild() {
-        Family family1 = createFamily(2);
-        Family family2 = createFamily(2);
+        mappingService.dissociate(parentA, List.of(childA1));
 
-        assertThat(mappingRepository.findAll()).containsExactlyInAnyOrderElementsOf(allOf(
-                family1.mappings(),
-                family2.mappings()));
-
-        mappingService.dissociate(family1.parent(), List.of(family1.children().get(0)));
-
-        assertThat(mappingRepository.findAll()).containsExactlyInAnyOrderElementsOf(allOf(
-                family1.mappings().subList(1, family1.mappings().size()),
-                family2.mappings()));
+        assertThat(mappingRepository.findAll())
+                .hasSize(3)
+                .containsAll(filter(mappingsA, m -> !Objects.equals(m.childId(), childA1.id())))
+                .containsAll(mappingsB);
     }
 
     @Test
     void dissociateDeletesMappingsForMultipleChildren() {
-        Family family1 = createFamily(2);
-        Family family2 = createFamily(2);
+        mappingService.dissociate(parentA, List.of(childA1, childA2));
 
-        assertThat(mappingRepository.findAll()).containsExactlyInAnyOrderElementsOf(allOf(
-                family1.mappings(),
-                family2.mappings()));
-
-        mappingService.dissociate(family1.parent(), family1.children());
-
-        assertThat(mappingRepository.findAll()).containsExactlyInAnyOrderElementsOf(family2.mappings());
+        assertThat(mappingRepository.findAll())
+                .hasSize(2)
+                .doesNotContainAnyElementsOf(mappingsA)
+                .containsAll(mappingsB);
     }
 
     @Test
     void dissociateDoesNotDeleteMappingsForUnrelatedChild() {
-        Family family1 = createFamily(2);
-        Family family2 = createFamily(2);
+        mappingService.dissociate(parentA, List.of(childB1, childB2));
 
-        assertThat(mappingRepository.findAll()).containsExactlyInAnyOrderElementsOf(allOf(
-                family1.mappings(),
-                family2.mappings()));
-
-        mappingService.dissociate(family2.parent(), family1.children());
-
-        assertThat(mappingRepository.findAll()).containsExactlyInAnyOrderElementsOf(allOf(
-                family1.mappings(),
-                family2.mappings()));
+        assertThat(mappingRepository.findAll())
+                .hasSize(4)
+                .containsAll(mappingsA)
+                .containsAll(mappingsB);
     }
 
     @Test
-    void findChildrenWorks() {
-        Family family = createFamily(2);
-        assertThat(mappingService.findChildren(family.parent(), ChildEntity.class))
-                .containsExactlyInAnyOrderElementsOf(family.children());
+    void findChildrenReturnsChildren() {
+        assertThat(mappingService.findChildren(parentA, ChildEntity.class))
+                .containsExactlyInAnyOrder(childA1, childA2);
     }
 
     @Test
-    void findChildrenDoesNotReturnUnrelatedChildren() {
-        Family family1 = createFamily(2);
-        createFamily(2);
-        assertThat(mappingService.findChildren(family1.parent(), ChildEntity.class))
-                .containsExactlyInAnyOrderElementsOf(family1.children());
-    }
-
-    @Test
-    void findChildrenDoesNotReturnUnrelatedChildType() {
-        Family family = createFamily(2);
-        assertThat(mappingService.findChildren(family.parent(), ParentEntity.class))
-                .isEmpty();
-    }
-
-    // Utilities to create parents and children
-
-    private record Family(
-            ParentEntity parent,
-            List<ChildEntity> children,
-            List<Mapping> mappings) { }
-
-    private Family createFamily(int size) {
-        ParentEntity parent = parentRepository.save(new ParentEntity());
-        List<ChildEntity> children = IntStream.range(0, size)
-                .mapToObj(i -> childRepository.save(new ChildEntity()))
-                .toList();
-
-        mappingService.associate(parent, children);
-
-        return new Family(parent, children, children.stream()
-                .map(child -> Mapping.create(parent, child))
-                .toList());
-    }
-
-    // Assertion utilities
-
-    private static <T> List<T> allOf(List<T> a, List<T> b) {
-        return Stream.concat(a.stream(), b.stream()).toList();
+    void findChildrenDoesNotReturnOtherChildType() {
+        assertThat(mappingService.findChildren(parentA, ParentEntity.class)).isEmpty();
     }
 }
