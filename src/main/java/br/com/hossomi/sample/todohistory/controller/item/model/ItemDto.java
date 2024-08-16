@@ -1,6 +1,6 @@
 package br.com.hossomi.sample.todohistory.controller.item.model;
 
-import br.com.hossomi.sample.todohistory.controller.user.model.UserDto;
+import br.com.hossomi.sample.todohistory.controller.user.model.User;
 import lombok.Builder;
 
 import java.util.Map;
@@ -9,6 +9,6 @@ import java.util.Map;
 public record ItemDto(
         Long id,
         String name,
-        UserDto assignee,
+        User assignee,
         Map<String, String> tags
 ) {}

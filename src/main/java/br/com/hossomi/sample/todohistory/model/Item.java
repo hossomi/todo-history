@@ -20,5 +20,5 @@ public class Item implements GenericEntity {
     private String name;
 
     @ManyToOne
-    private User assignee;
+    private MUser assignee;
 }

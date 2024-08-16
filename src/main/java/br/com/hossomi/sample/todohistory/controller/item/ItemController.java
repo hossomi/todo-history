@@ -3,7 +3,7 @@ package br.com.hossomi.sample.todohistory.controller.item;
 import br.com.hossomi.sample.todohistory.controller.item.model.CreateItemRequest;
 import br.com.hossomi.sample.todohistory.controller.item.model.ItemDto;
 import br.com.hossomi.sample.todohistory.controller.item.model.UpdateItemRequest;
-import br.com.hossomi.sample.todohistory.controller.user.model.UserDto;
+import br.com.hossomi.sample.todohistory.controller.user.model.User;
 import br.com.hossomi.sample.todohistory.model.Item;
 import br.com.hossomi.sample.todohistory.repository.ItemRepository;
 import br.com.hossomi.sample.todohistory.repository.UserRepository;
@@ -72,7 +72,7 @@ public class ItemController {
         return ItemDto.builder()
                 .id(item.id())
                 .name(item.name())
-                .assignee(UserDto.builder()
+                .assignee(User.builder()
                         .id(item.assignee().id())
                         .name(item.assignee().name())
                         .build())

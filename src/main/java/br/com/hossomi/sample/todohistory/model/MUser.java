@@ -4,13 +4,15 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.envers.Audited;
 
+import java.util.Collection;
+
 @Entity
 @Audited
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User implements GenericEntity {
+public class MUser implements GenericEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,4 +20,7 @@ public class User implements GenericEntity {
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    @Transient
+    private Collection<Tag> tags;
 }

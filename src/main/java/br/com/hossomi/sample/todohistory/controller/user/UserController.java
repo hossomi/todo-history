@@ -2,72 +2,66 @@ package br.com.hossomi.sample.todohistory.controller.user;
 
 import br.com.hossomi.sample.todohistory.controller.user.model.CreateUserRequest;
 import br.com.hossomi.sample.todohistory.controller.user.model.UpdateUserRequest;
-import br.com.hossomi.sample.todohistory.controller.user.model.UserDto;
-import br.com.hossomi.sample.todohistory.model.User;
-import br.com.hossomi.sample.todohistory.repository.UserRepository;
+import br.com.hossomi.sample.todohistory.controller.user.model.User;
+import br.com.hossomi.sample.todohistory.model.MUser;
+import br.com.hossomi.sample.todohistory.model.Tag;
 import br.com.hossomi.sample.todohistory.service.TagService;
+import br.com.hossomi.sample.todohistory.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import static java.util.stream.StreamSupport.stream;
+import java.util.List;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserRepository userRepo;
+    private final UserService userService;
     private final TagService tagService;
 
     @PostMapping
-    @Transactional
-    public UserDto create(@RequestBody CreateUserRequest request) {
-        User user = userRepo.save(User.builder()
-                .name(request.name())
-                .build());
-        UserDto.Builder dto = convert(user);
-
-        if (request.tags() != null) { dto.tags(tagService.setTags(user, request.tags())); }
-        return dto.build();
+    public User create(@RequestBody CreateUserRequest request) {
+        return convert(userService.create(MUser.builder()
+                        .name(request.name())
+                        .build(),
+                request.tags()));
     }
 
     @GetMapping
-    public Iterable<UserDto> list() {
-        return stream(userRepo.findAll().spliterator(), false)
+    public List<User> list() {
+        return userService.find().stream()
                 .map(UserController::convert)
-                .map(UserDto.Builder::build)
                 .toList();
     }
 
     @GetMapping("/{userId}")
-    @Transactional
-    public UserDto get(@PathVariable("userId") Long userId) {
-        return convert(userRepo.findById(userId).orElseThrow()).build();
+    public User get(@PathVariable("userId") Long userId) {
+        return convert(userService.find(userId).orElseThrow());
     }
 
     @PutMapping("/{userId}")
     @Transactional
-    public UserDto update(
+    public User update(
             @PathVariable("userId") Long userId,
             @RequestBody UpdateUserRequest request) {
-        User user = userRepo.findById(userId).orElseThrow();
-        if (request.name() != null) { user.name(request.name()); }
-
-        UserDto.Builder dto = convert(userRepo.save(user));
-
-        if (request.tags() != null) { dto.tags(tagService.setTags(user, request.tags())); }
-        return dto.build();
+        return convert(userService.update(userId, MUser.builder()
+                .name(request.name())
+                .tags(Tag.fromMap(request.tags()))
+                .build()));
     }
 
     @DeleteMapping("/{userId}")
     public void delete(@PathVariable("userId") Long userId) {
-        userRepo.deleteById(userId);
+        userService.delete(userId);
     }
 
-    private static UserDto.Builder convert(User user) {
-        return UserDto.builder()
+    private static User convert(MUser user) {
+        return User.builder()
                 .id(user.id())
-                .name(user.name());
+                .name(user.name())
+                .tags(Tag.toMap(user.tags()))
+                .build();
     }
 }

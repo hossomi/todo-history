@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ public class TagService {
     private final MappingService mappingService;
 
     @Transactional
-    public Map<String, String> setTags(GenericEntity parent, Map<String, String> tags) {
+    public Collection<Tag> setTags(GenericEntity parent, Map<String, String> tags) {
         Set<Tag> existingTags = newHashSet(mappingService.findChildren(parent, Tag.class,
                 (tag, query, criteria) -> criteria.in(tag.get("name")).in(tags.keySet())));
         Map<String, Tag> existingTagMap = uniqueIndex(existingTags, Tag::name);
@@ -44,8 +45,6 @@ public class TagService {
         mappingService.associate(parent, newTags);
         mappingService.dissociate(parent, oldTags);
 
-        return updatedTags.stream().collect(toMap(
-                Tag::name,
-                Tag::value));
+        return updatedTags;
     }
 }
