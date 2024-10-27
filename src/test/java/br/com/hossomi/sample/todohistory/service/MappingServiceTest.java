@@ -1,18 +1,14 @@
 package br.com.hossomi.sample.todohistory.service;
 
-import br.com.hossomi.sample.todohistory.model.Mapping;
+import br.com.hossomi.sample.todohistory.model.MMapping;
 import br.com.hossomi.sample.todohistory.repository.MappingRepository;
 import br.com.hossomi.sample.todohistory.test.TestEntity;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 
@@ -55,8 +51,8 @@ public class MappingServiceTest {
 
         mappingService.associate(parent, List.of(child1, child2));
         verify(mappingRepository).saveAll(List.of(
-                Mapping.create(parent, child1),
-                Mapping.create(parent, child2)));
+                MMapping.create(parent, child1),
+                MMapping.create(parent, child2)));
     }
 
     @Test

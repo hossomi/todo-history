@@ -21,11 +21,11 @@ public class UserService {
     private final TagService tagService;
 
     @Transactional
-    public MUser create(MUser user, Map<String, String> tags) {
+    public MUser create(MUser user) {
         user = userRepo.save(user);
 
-        if (tags != null) {
-            user.tags(tagService.setTags(user, tags));
+        if (user.tags() != null) {
+            user.tags(tagService.setTags(user, user.tags()));
         }
 
         return user;

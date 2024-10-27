@@ -4,7 +4,6 @@ import br.com.hossomi.sample.todohistory.controller.user.model.CreateUserRequest
 import br.com.hossomi.sample.todohistory.controller.user.model.UpdateUserRequest;
 import br.com.hossomi.sample.todohistory.controller.user.model.User;
 import br.com.hossomi.sample.todohistory.model.MUser;
-import br.com.hossomi.sample.todohistory.model.Tag;
 import br.com.hossomi.sample.todohistory.service.TagService;
 import br.com.hossomi.sample.todohistory.service.UserService;
 import jakarta.transaction.Transactional;
@@ -24,9 +23,9 @@ public class UserController {
     @PostMapping
     public User create(@RequestBody CreateUserRequest request) {
         return convert(userService.create(MUser.builder()
-                        .name(request.name())
-                        .build(),
-                request.tags()));
+                .name(request.name())
+                .tags(request.tags())
+                .build()));
     }
 
     @GetMapping
@@ -48,7 +47,7 @@ public class UserController {
             @RequestBody UpdateUserRequest request) {
         return convert(userService.update(userId, MUser.builder()
                 .name(request.name())
-                .tags(Tag.fromMap(request.tags()))
+                .tags(request.tags())
                 .build()));
     }
 
@@ -61,7 +60,7 @@ public class UserController {
         return User.builder()
                 .id(user.id())
                 .name(user.name())
-                .tags(Tag.toMap(user.tags()))
+                .tags(user.tags())
                 .build();
     }
 }

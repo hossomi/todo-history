@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.envers.Audited;
 
 import java.util.Collection;
+import java.util.Map;
 
 @Entity
 @Audited
@@ -22,5 +23,5 @@ public class MUser implements GenericEntity {
     private String name;
 
     @Transient
-    private Collection<Tag> tags;
+    private Map<String, String> tags;
 }

@@ -1,6 +1,6 @@
 package br.com.hossomi.sample.todohistory.integration.service;
 
-import br.com.hossomi.sample.todohistory.model.Mapping;
+import br.com.hossomi.sample.todohistory.model.MMapping;
 import br.com.hossomi.sample.todohistory.repository.MappingRepository;
 import br.com.hossomi.sample.todohistory.service.MappingService;
 import br.com.hossomi.sample.todohistory.test.ChildEntity;
@@ -17,11 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
-import static com.google.common.collect.Collections2.filter;
+import static com.google.common.collect.Lists.newArrayList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -46,8 +44,8 @@ public class MappingServiceTest {
     private ChildEntity childB2 = new ChildEntity();
 
     private MappingService mappingService;
-    private Collection<Mapping> mappingsA;
-    private Collection<Mapping> mappingsB;
+    private List<MMapping> mappingsA;
+    private List<MMapping> mappingsB;
 
     @BeforeEach
     void setup() {
@@ -59,8 +57,8 @@ public class MappingServiceTest {
         childB2 = childRepository.save(childB2);
 
         mappingService = new MappingService(mappingRepository, entityManager);
-        mappingsA = mappingService.associate(parentA, List.of(childA1, childA2));
-        mappingsB = mappingService.associate(parentB, List.of(childB1, childB2));
+        mappingsA = newArrayList(mappingService.associate(parentA, List.of(childA1, childA2)));
+        mappingsB = newArrayList(mappingService.associate(parentB, List.of(childB1, childB2)));
     }
 
     @Test
@@ -78,7 +76,8 @@ public class MappingServiceTest {
 
         assertThat(mappingRepository.findAll())
                 .hasSize(3)
-                .containsAll(filter(mappingsA, m -> !Objects.equals(m.childId(), childA1.id())))
+                .doesNotContain(mappingsA.get(0))
+                .contains(mappingsA.get(1))
                 .containsAll(mappingsB);
     }
 
@@ -95,6 +94,29 @@ public class MappingServiceTest {
     @Test
     void dissociateDoesNotDeleteMappingsForUnrelatedChild() {
         mappingService.dissociate(parentA, List.of(childB1, childB2));
+
+        assertThat(mappingRepository.findAll())
+                .hasSize(4)
+                .containsAll(mappingsA)
+                .containsAll(mappingsB);
+    }
+
+    @Test
+    void dissociateWithSpecDeletesMappings() {
+        mappingService.dissociate(parentA, ChildEntity.class,
+                (child, query, criteria) -> criteria.equal(child.get("id"), childA1.id()));
+
+        assertThat(mappingRepository.findAll())
+                .hasSize(3)
+                .doesNotContain(mappingsA.get(0))
+                .contains(mappingsA.get(1))
+                .containsAll(mappingsB);
+    }
+
+    @Test
+    void dissociateWithSpecDoesNotDeleteMappingsForUnrelatedChild() {
+        mappingService.dissociate(parentA, ChildEntity.class,
+                (child, query, criteria) -> criteria.equal(child.get("id"), childB1.id()));
 
         assertThat(mappingRepository.findAll())
                 .hasSize(4)
