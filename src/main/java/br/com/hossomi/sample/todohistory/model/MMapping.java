@@ -47,37 +47,21 @@ public class MMapping {
                 .build();
     }
 
-    /**
-     * Groups provided children by type {@code childType} and their respective {@code childrenId}.
-     * Then, applies {@link #isParentOfAny(Class, Collection)} to each group and applies OR to all conditions.
-     */
-    public static Specification<MMapping> isParentOfAny(Collection<? extends GenericEntity> children) {
+    public static Specification<MMapping> mapsToAnyChild(Collection<? extends GenericEntity> children) {
         var childrenIdByType = children.stream().collect(groupingBy(
                 child -> child.getClass(),
                 mapping(GenericEntity::id, toList())));
         return anyOf(childrenIdByType.entrySet().stream()
-                .map(e -> isParentOfAny(e.getKey(), e.getValue()))
+                .map(e -> mapsToAnyChild(e.getKey(), e.getValue()))
                 .collect(toList()));
     }
 
-    /**
-     * Returns the condition:
-     * <pre>
-     *     childType = {childType} AND childId IN {childrenId}
-     * </pre>
-     */
-    private static <T extends GenericEntity> Specification<MMapping> isParentOfAny(Class<T> childType, Collection<Long> childrenId) {
+    private static <T extends GenericEntity> Specification<MMapping> mapsToAnyChild(Class<T> childType, Collection<Long> childrenId) {
         return (mapping, query, criteria) -> criteria.and(
                 criteria.equal(mapping.get("childType"), childType),
                 mapping.get("childId").in(childrenId));
     }
 
-    /**
-     * Returns the condition:
-     * <pre>
-     *     parentType = {parentType} AND parentId = {parentId}
-     * </pre>
-     */
     public static Specification<MMapping> mapsToParent(GenericEntity parent) {
         return (mapping, query, criteria) -> criteria.and(
                 criteria.equal(mapping.get("parentType"), parent.getClass()),
@@ -92,11 +76,5 @@ public class MMapping {
 
     public static <T extends GenericEntity> Specification<MMapping> mapsParentAndChild(GenericEntity parent, Root<T> child) {
         return mapsToParent(parent).and(mapsToChild(child));
-    }
-
-    public static <T extends GenericEntity> Predicate isChildOf(Root<MMapping> mapping, Root<T> child, CriteriaBuilder criteria) {
-        return criteria.and(
-                criteria.equal(mapping.get("childType"), child.getJavaType()),
-                criteria.equal(mapping.get("childId"), child.get("id")));
     }
 }

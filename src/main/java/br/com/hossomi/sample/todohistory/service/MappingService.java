@@ -39,7 +39,7 @@ public class MappingService {
     @Transactional
     public void dissociate(GenericEntity parent, Collection<? extends GenericEntity> children) {
         if (children == null || children.isEmpty()) { return; }
-        mappingRepository.delete(mapsToParent(parent).and(isParentOfAny(children)));
+        mappingRepository.delete(mapsToParent(parent).and(mapsToAnyChild(children)));
     }
 
     @Transactional

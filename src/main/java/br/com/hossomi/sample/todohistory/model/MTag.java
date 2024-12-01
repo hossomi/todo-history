@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @Entity
@@ -30,6 +29,7 @@ public class MTag implements GenericEntity {
 
     @Column(nullable = false)
     private String name;
+
     @Column(nullable = false)
     private String value;
 
@@ -48,19 +48,16 @@ public class MTag implements GenericEntity {
     }
 
     public static Map<String, String> toMap(Collection<MTag> tags) {
-        return tags != null
-                ? tags.stream()
-                .collect(Collectors.toMap(MTag::name, MTag::value, (t1, t2) -> {
-                    log.warn("Duplicated tag name (first will be used): {} / {}", t1, t2);
-                    return t1;
-                }))
-                : null;
+        if (tags == null) { return Map.of(); }
+        return tags.stream().collect(Collectors.toMap(MTag::name, MTag::value, (t1, t2) -> {
+            log.warn("Duplicated tag name (first will be used): {} / {}", t1, t2);
+            return t1;
+        }));
     }
 
     public static Set<MTag> fromMap(Map<String, String> tags) {
-        return tags != null
-                ? tags.entrySet().stream().map(MTag::create).collect(toSet())
-                : null;
+        if (tags == null) { return Set.of(); }
+        return tags.entrySet().stream().map(MTag::create).collect(toSet());
     }
 
     public static Specification<MTag> nameIsAnyOf(Collection<String> names) {
